@@ -9,6 +9,6 @@ Students are expected to:
 Student Info
 =========================
 
-* Student Name: Vũ Hoàng Lân
+* Student Name: Vũ Hoàng Lân - ICT1
 * Student ID: 22BI13244
 
