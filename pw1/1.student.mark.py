@@ -44,9 +44,12 @@ def show_student_marks(course_id):
         if course_id in student[3]:
             print(f"Student ID: {student[0]}, Mark: {student[3][course_id]}")
 
-input_students()
-input_courses()
-input_marks()
-list_courses()
-list_students()
-show_student_marks(input("Enter course ID to show student marks: "))
+def main():
+    input_students()
+    input_courses()
+    input_marks()
+    list_courses()
+    list_students()
+    show_student_marks(input("Enter course ID to show student marks: "))
+
+main()
