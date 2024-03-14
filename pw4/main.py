@@ -2,7 +2,7 @@ import math
 import curses
 from input import get_input, get_float_input
 from output import clear_screen, display_menu, display_message
-from domains.student import Student
+from domains import Student
 
 def main(stdscr):
     # Initialize curses
