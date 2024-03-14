@@ -1,5 +1,4 @@
-# main.py
-
+import pw4
 import math
 import curses
 from input import get_input, get_float_input
