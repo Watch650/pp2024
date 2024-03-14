@@ -1,0 +1,3 @@
+Enter ID: 1
+Enter Name: lan
+Enter date of birth: 111/09/2004
