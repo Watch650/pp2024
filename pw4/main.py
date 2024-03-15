@@ -14,7 +14,7 @@ def main(stdscr):
     
     # Main loop
     while True:
-        display_menu(stdscr, ["School Management System", "1. Add Student", "2. Add Course", "3. Input Marks for Student", "4. Show Student GPA", "5. List Students", "6. List Courses", "7. Exit"])
+        display_menu(stdscr, ["School Management System", "1. Add Student", "2. Add Course", "3. Input Marks for Student", "4. Show Student Marks", "5. List Students", "6. List Courses", "7. Exit"])
         
         # Get user input
         choice = stdscr.getch()
@@ -25,8 +25,15 @@ def main(stdscr):
             display_message(stdscr, 0, "Add Student")
             id = get_input(stdscr, 2, "Enter ID: ")
             name = get_input(stdscr, 2, "Enter Name: ")
-            dob = get_input(stdscr, 2, "Enter date of birth: ")
-            students[id] = Student(id, name, dob)
+            dob = get_input(stdscr, 2, "Enter date of birth (dd/mm/yyyy): ")
+            try:
+                day, month, year = map(int, dob.split('/'))
+                format_dob = f"{day:02d}/{month:02d}/{year:04d}"
+            except ValueError:
+                display_message(stdscr, 5, "Invalid date format. Please enter in dd/mm/yyyy format.")
+                stdscr.getch()
+                continue
+            students[id] = Student(id, name, format_dob)
             display_message(stdscr, 5, "Student added successfully.")
             stdscr.getch()
         
@@ -57,15 +64,19 @@ def main(stdscr):
             stdscr.getch()
         
         elif choice == ord('4'):
-            # Show Student GPA
+            # Show Student marks
             clear_screen(stdscr)
-            display_message(stdscr, 0, "Show Student GPA")
+            display_message(stdscr, 0, "Show Student marks")
             student_id = get_input(stdscr, 2, "Enter Student ID: ")
+            course_id = get_input(stdscr, 2, "Enter Course ID: ")
 
             if student_id in students:
-                gpa = students[student_id].calculateGPA()
-                gpa = math.floor(gpa * 10) / 10
-                display_message(stdscr, 4, f"GPA: {gpa}")
+                student = students[student_id]
+                if course_id in student.marks:
+                    mark = student.marks[course_id]['mark']
+                    display_message(stdscr, 4, f"Mark for course {course_id}: {mark}")
+                else:
+                    display_message(stdscr, 4, "No mark found.")
             else:
                 display_message(stdscr, 4, "Student not found.")
             stdscr.getch()
