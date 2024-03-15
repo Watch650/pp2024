@@ -1,13 +1,13 @@
-import os
+import curses
 
-def get_input(stdscr, y, prompt, file_path):
+def get_input(stdscr, y, prompt):
     stdscr.clear()
     stdscr.addstr(y, 0, prompt)
     stdscr.refresh()
+    curses.echo()
     input_data = stdscr.getstr().decode('utf-8')
-    with open(file_path, 'a') as file:
-        file.write(prompt + input_data + '\n')
+    curses.noecho()
     return input_data
 
-def get_float_input(stdscr, y, prompt, file_path):
-    return float(get_input(stdscr, y, prompt, file_path))
+def get_float_input(stdscr, y, prompt):
+    return float(get_input(stdscr, y, prompt))

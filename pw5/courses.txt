@@ -1,4 +1,2 @@
-Enter ID: 
-Enter Name: 
-Enter ID: 1
-Enter Name: math
+1, Math
+2, Python

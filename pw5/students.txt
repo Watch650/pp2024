@@ -1,3 +1,2 @@
-Enter ID: 1
-Enter Name: lan
-Enter date of birth: 111/09/2004
+1, lan, 11/09/2004
+2, Nam, 01/01/1999

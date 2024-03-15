@@ -1,8 +1,11 @@
 import math
 import curses
+from curses import wrapper
 from input import get_input, get_float_input
 from output import clear_screen, display_menu, display_message
+from utils import compress_files, decompress_and_load_data
 from domains.student import Student
+
 
 def main(stdscr):
     # Initialize curses
@@ -11,10 +14,11 @@ def main(stdscr):
     # Define a dictionary to store students and courses
     students = {}
     courses = {}
-    
-    # Main loop
+
+    decompress_and_load_data(students, courses)
+
     while True:
-        display_menu(stdscr, ["School Management System", "1. Add Student", "2. Add Course", "3. Input Marks for Student", "4. Show Student GPA", "5. List Students", "6. List Courses", "7. Exit"])
+        display_menu(stdscr, ["School Management System", "1. Add Student", "2. Add Course", "3. Input Marks for Student", "4. Show Student Marks", "5. List Students", "6. List Courses", "7. Exit"])
         
         # Get user input
         choice = stdscr.getch()
@@ -23,19 +27,32 @@ def main(stdscr):
             # Add Student
             clear_screen(stdscr)
             display_message(stdscr, 0, "Add Student")
-            id = get_input(stdscr, 2, "Enter ID: ", "students.txt")
-            name = get_input(stdscr, 2, "Enter Name: ", "students.txt")
-            dob = get_input(stdscr, 2, "Enter date of birth: ", "students.txt")
-            students[id] = Student(id, name, dob)
-            display_message(stdscr, 5, "Student added successfully.")
-            stdscr.getch()
+            id = get_input(stdscr, 2, "Enter ID: ")
+            name = get_input(stdscr, 2, "Enter Name: ")
+            dob = get_input(stdscr, 2, "Enter date of birth (dd/mm/yyyy): ")
+            try:
+                day, month, year = map(int, dob.split('/'))
+                format_dob = f"{day:02d}/{month:02d}/{year:04d}"
+                line = (f"{id}, {name}, {format_dob}")
+                with open("students.txt", 'a') as file:
+                    file.write(line + "\n")
+                students[id] = Student(id, name, format_dob)
+                display_message(stdscr, 5, "Student added successfully.")
+                stdscr.getch()
+            except ValueError:
+                display_message(stdscr, 5, "Please enter in dd/mm/yyyy format.")
+                stdscr.getch()
+                continue
         
         elif choice == ord('2'):
             # Add Course
             clear_screen(stdscr)
             display_message(stdscr, 0, "Add Course")
-            id = get_input(stdscr, 2, "Enter ID: ", "courses.txt")
-            name = get_input(stdscr, 2, "Enter Name: ", "courses.txt")
+            id = get_input(stdscr, 2, "Enter ID: ")
+            name = get_input(stdscr, 2, "Enter Name: ")
+            line = (f"{id}, {name}")
+            with open("courses.txt", 'a') as file:
+                file.write(line + "\n")
             courses[id] = name
             display_message(stdscr, 5, "Course added successfully.")
             stdscr.getch()
@@ -44,11 +61,14 @@ def main(stdscr):
             # Input Marks for Student
             clear_screen(stdscr)
             display_message(stdscr, 0, "Input Marks for Student")
-            student_id = get_input(stdscr, 2, "Enter Student ID: ", "marks.txt")
-            course_id = get_input(stdscr, 2, "Enter Course ID: ", "marks.txt")
-            mark = get_float_input(stdscr, 3, "Enter Mark: ", "marks.txt")
+            student_id = get_input(stdscr, 2, "Enter Student ID: ")
+            course_id = get_input(stdscr, 2, "Enter Course ID: ")
+            mark = get_float_input(stdscr, 3, "Enter Mark: ")
             mark = math.floor(mark * 10) / 10
-            credit = get_float_input(stdscr, 3, "Enter Credit: ", "marks.txt")
+            credit = get_float_input(stdscr, 3, "Enter Credit: ")
+            line = (f"{student_id}, {course_id}, {mark}, {credit}")
+            with open("marks.txt", 'a') as file:
+                file.write(line + "\n")
             if student_id in students:
                 students[student_id].add_mark(course_id, mark, credit)
                 display_message(stdscr, 5, "Mark added successfully.")
@@ -57,17 +77,19 @@ def main(stdscr):
             stdscr.getch()
         
         elif choice == ord('4'):
-            # Show Student GPA
+            # Show Student marks
             clear_screen(stdscr)
-            display_message(stdscr, 0, "Show Student GPA")
-            student_id = get_input(stdscr, 2, "Enter Student ID: ", "GPA.txt")
+            display_message(stdscr, 0, "Show Student marks")
+            student_id = get_input(stdscr, 2, "Enter Student ID: ")
+            course_id = get_input(stdscr, 2, "Enter Course ID: ")
 
             if student_id in students:
-                gpa = students[student_id].calculateGPA()
-                gpa = math.floor(gpa * 10) / 10
-                display_message(stdscr, 4, f"GPA: {gpa}")
-                with open("GPA.txt", 'a') as file:
-                    file.write("GPA: " + gpa + '\n')
+                student = students[student_id]
+                if course_id in student.marks:
+                    mark = student.marks[course_id]['mark']
+                    display_message(stdscr, 4, f"Mark for course {course_id}: {mark}")
+                else:
+                    display_message(stdscr, 4, "No mark found.")
             else:
                 display_message(stdscr, 4, "Student not found.")
             stdscr.getch()
@@ -92,6 +114,7 @@ def main(stdscr):
         
         elif choice == ord('7'):
             # Exit
+            compress_files()
             break
 
 # Run the application
