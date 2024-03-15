@@ -44,7 +44,7 @@ def main(stdscr):
         stdscr.addstr(2, 0, "1. Add Student")
         stdscr.addstr(3, 0, "2. Add Course")
         stdscr.addstr(4, 0, "3. Input Marks for Student")
-        stdscr.addstr(5, 0, "4. Show Student GPA")
+        stdscr.addstr(5, 0, "4. Show Student Marks")
         stdscr.addstr(6, 0, "5. List Students")
         stdscr.addstr(7, 0, "6. List Courses")
         stdscr.addstr(8, 0, "7. Exit")
@@ -112,16 +112,23 @@ def main(stdscr):
             stdscr.getch()
         
         elif choice == ord('4'):
-            # Show Student GPA
+            # Show Student mark
             stdscr.clear()
-            stdscr.addstr(0, 0, "Show Student GPA")
+            stdscr.addstr(0, 0, "Show Student marks")
             stdscr.addstr(2, 0, "Enter Student ID: ")
             stdscr.refresh()
             student_id = stdscr.getstr().decode('utf-8')
+            stdscr.addstr(2, 0, "Enter Course ID: ")
+            stdscr.refresh()
+            course_id = stdscr.getstr().decode('utf-8')
 
             if student_id in students:
-                gpa = students[student_id].calculateGPA()
-                stdscr.addstr(4, 0, f"GPA: {gpa}")
+                student = students[student_id]
+                if course_id in student.marks[course_id]['mark']:
+                    mark = student.marks[course_id]['mark']
+                    stdscr.addstr(4, 0, f"Mark for course {course_id}: {mark}")
+                else:
+                    stdscr.addstr(4, 0, f"Mark not found.")
             else:
                 stdscr.addstr(4, 0, "Student not found.")
             stdscr.refresh()
